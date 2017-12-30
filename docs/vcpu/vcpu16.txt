@@ -1,0 +1,224 @@
+VCPU-16 Specification
+Version 1.0
+
+=== SUMMARY ===================================================================
+
+ * 16 Bit Words
+ * 65536 words of RAM
+ * 8 General Purpose Registers (A, B, C, X, Y, Z, I, J)
+ * 4 Specialty Registers
+   - Program Counter (PC)
+   - Stack Pointer (SP)
+   - Program Status (PS)
+   - Interrupt Address (IA)
+ 
+In this document, anything within [brackets] is shorthand for "the value in 
+memory at the location of the value inside the brackets". For example, SP means
+stack pointer, but [SP] means the value of the RAM at the location the stack
+pointer is pointing at.
+
+Whenever the CPU needs to read a word, it reads [PC], then increases PC by one.
+Shorthand for this is [PC++]. In some cases, the CPU will modify a value before
+reading it, in this case the shorthand is [++PC].
+
+NOTE: Cycle Values are subject to change
+
+=== Instruction Decoding =======================================================
+
+Instructions are 1 to 3 words long and are fully defined by the first word. 
+Instructions are classified as one of 3 types: binary, unary and nullary. All 
+base instructions use LSB-0 format and consist of 3 masks: upper, middle,
+and lower using the following format: UUUUUUMMMMMLLLLL
+
+In a binary instruction, the lower mask of the first word is the opcode, the 
+upper mask is a six bit value U and the middle mask is a five bit value M.
+
+
+In a unary instruction, the lower mask is set to zero, the upper mask is a six
+bit value U and the middle mask is a 5 bit opcode.
+
+Nullary instructions set both the middle and lower mask to zero with the upper
+mask being a 6 bit opcode.
+
+The VCPU-16 has a reverse stack starting at memory location 0xFFFF. As such
+popping the stack increments the stack pointer where as pushing the stack 
+decrements it. 
+
+In the following tables C is the number of cycles required to resolve a given
+opcode or value. This time is cumulative such that an opcode requiring 3 cycles
+using 2 values that require 2 cycles each will take 7 cycles to complete. In
+addition "NEXT" means "[PC++]" and increases the word length of the instruction
+by 1. Attempting to write to a literal value silently fails. Signed numbers are
+represented using two's complement.
+
+Instruction Reading Rules:
+Nullary Instruction: (word & 0xFFFF) == VALUE << 10
+Unary Instruction:   (word & 0x03FF) == VALUE << 5
+Binary Instruction:  (word & 0x001F) == VALUE << 0
+Upper Value:         (word & 0xFC00) == VALUE << 10
+Middle Value:        (word & 0x03E0) == VALUE << 5
+
+--- Upper Values: 6 bits ------------------------------------------------------
+ C | VALUE     | NAME         | DESCRIPTION
+---+-----------+---------------------------------------------------------------
+ 0 | 0x00-0x07 | reg          | GP Register (A, B, C, X, Y, Z, I or J)
+ 0 | 0x08-0x0f | [reg]        | Memory at GP Register
+ 1 | 0x10-0x17 | [reg + NEXT] | Memory at (GP Register + NEXT)
+ 0 |      0x18 | [SP++]       | Pop Stack
+ 0 |      0x19 | [SP]         | Peek Stack
+ 1 |      0x1A | [SP + NEXT]  | Pick Stack
+ 0 |      0x1B | SP           | SP Register
+ 0 |      0x1C | PC           | PC Register
+ 0 |      0x1D | PS           | PS Register 
+ 1 |      0x1E | [NEXT]       | Memory at NEXT
+ 1 |      0x1F | NEXT         | NEXT as literal
+ 0 | 0x20-0x3F | literal      | Literal value 0xFFFF-0x001E (-1..30)
+---+-----------+---------------------------------------------------------------
+
+--- Middle Values: 5 bits -------------------------------------------------------
+ C | VALUE     | NAME         | DESCRIPTION
+---+-----------+---------------------------------------------------------------
+ 0 | 0x00-0x07 | reg          | GP Register (A, B, C, X, Y, Z, I or J)
+ 0 | 0x08-0x0f | [reg]        | Memory at GP Register
+ 1 | 0x10-0x17 | [reg + NEXT] | Memory at (GP Register + NEXT)
+ 0 |      0x18 | [--SP]       | Push Stack
+ 0 |      0x19 | [SP]         | Peek Stack
+ 1 |      0x1A | [SP + NEXT]  | Pick Stack
+ 0 |      0x1B | SP           | SP Register
+ 0 |      0x1C | PC           | PC Register
+ 0 |      0x1D | PS           | PS Register 
+ 1 |      0x1E | [NEXT]       | Memory at NEXT
+ 1 |      0x1F | NEXT         | NEXT as literal
+---+-----------+---------------------------------------------------------------
+
+--- Binary OpCodes: 5 bits -----------------------------------------------------
+ C | VAL  | NAME     | DESCRIPTION
+---+------+----------+---------------------------------------------------------
+ - | 0x00 | n/a      | Unary Instruction - see above
+ 1 | 0x01 | SET m, u | Sets m to u
+ 2 | 0x02 | ADD m, u | Sets m to m + u, sets PS to 0x0001 if there's an overflow, 
+   |      |          | 0x0000 otherwise
+ 2 | 0x03 | SUB m, u | Sets m to m - u, sets PS to 0xFFFF if there's an underflow,
+   |      |          | 0x0000 otherwise
+ 2 | 0x04 | MUL m, u | Sets m to m * u, sets PS to ((m*u)>>16) & 0xFFFF)
+   |      |          | (treats m, u as unsigned)
+ 2 | 0x05 | MLI m, u | Sets m to m * u, sets PS to ((m*u)>>16) & 0xFFFF)
+   |      |          | (treats m, u as signed)
+ 3 | 0x06 | DIV m, u | Sets m to m / u, sets PS to ((m<<16)/u)&0xFFFF. If u==0,
+   |      |          | sets m and PS to 0 instead. (treats m, u as unsigned)
+ 3 | 0x07 | DVI m, u | Sets m to m / u, sets PS to ((m<<16)/u)&0xFFFF. If u==0,
+   |      |          | sets m and PS to 0 instead. (treats m, u as signed)
+ 3 | 0x08 | MOD m, u | Sets m to m % u. If u==0, sets m to 0 instead. 
+   |      |          | (treats m, u as unsigned)
+ 3 | 0x09 | MDI m, u | Sets m to m % u. If u==0, sets m to 0 instead. 
+   |      |          | (treats m, u as signed [MDI -7, 16 == -7])
+ 1 | 0x0A | AND m, u | Sets m to m & u
+ 1 | 0x0B | BOR m, u | Sets m to m | u
+ 1 | 0x0C | XOR m, u | Sets m to m ^ u
+ 1 | 0x0D | LLS m, u | Sets m to m << u, sets PS to ((m<<u)>>16)&0xFFFF (logical left shift)
+ 1 | 0x0E | LRS m, u | Sets m to m >> u, sets PS to ((m<<16)>>u)&0xFFFF (logical right shift)
+ 1 | 0x0F | ARS m, u | Sets m to m >>> u, sets PS to ((m<<16)>>>u)&0xFFFF (arithmetic shift) (treats m as signed)
+ 2+| 0x10 | IFB m, u | Performs next instruction only if (m & u) != 0
+ 2+| 0x11 | IFC m, u | Performs next instruction only if (m & u) == 0
+ 2+| 0x12 | IFE m, u | Performs next instruction only if m == u 
+ 2+| 0x13 | IFN m, u | Performs next instruction only if m != u 
+ 2+| 0x14 | IFG m, u | Performs next instruction only if m > u (unsigned) 
+ 2+| 0x15 | IFA m, u | Performs next instruction only if m > u (signed)
+ 2+| 0x16 | IFL m, u | Performs next instruction only if m < u (unsigned)
+ 2+| 0x17 | IFU m, u | Performs next instruction only if m < u (signed)
+ - | 0x18 | -        |
+ - | 0x19 | -        |
+ 3 | 0x1A | ADX m, u | Sets m to m+u+PS, sets PS to 0x0001 if there is an 
+   |      |          | overflow, 0x0000 otherwise
+ 3 | 0x1B | SBX m, u | Sets m to m-u+PS, sets PS to 0xFFFF if there is an
+   |      |          | underflow, 0x0000 otherwise
+ - | 0x1C | -        | 
+ - | 0x1D | -        | 
+ 2 | 0x1E | STI m, u | Sets m to u, then increases I and J by 1
+ 2 | 0x1F | STD m, u | Sets m to u, then decreases I and J by 1
+---+------+----------+----------------------------------------------------------
+
+* The branching opcodes take one cycle longer to perform if the test fails
+  When they skip an if instruction, they will skip an additional instruction
+  at the cost of one extra cycle. This lets you easily chain conditionals.
+
+--- Unary opcodes: (5 bits) ----------------------------------------------------
+ C | VALUE     | NAME  | DESCRIPTION
+---+-----------+-------+--------------------------------------------------------
+ - | 0x00      | n/a   | Nullary Instruction - See Above
+ 3 | 0x01      | JSR u | Pushes the address of the next instruction to the
+   |           |       | stack, then sets PC to u
+ - | 0x02-0x07 | -     | Reserved for future expansion
+ 4 | 0x08      | INT u | Triggers a software interrupt with message u
+ 1 | 0x09      | IAG u | Sets u to IA
+ 1 | 0x0A      | IAS u | Sets IA to u
+ 3 | 0x0B      | RFI u | Disables interrupt queueing, pops A from the stack, then
+   |           |       | pops PC from the stack
+ 2 | 0x0C      | IAQ u | If u is nonzero, interrupts will be added to the queue
+   |           |       | instead of triggered. If u is zero, interrupts will be
+   |           |       | triggered as normal again
+ - | 0x0D-0x0F | -     | Reserved for future expansion 
+ 2 | 0x10      | HWN u | Sets u to number of connected hardware devices
+ 4 | 0x11      | HWQ u | Sets X, Y, Z registers to information about hardware at
+   |           |       | port u
+   |           |       | X is a 16 bit word identifying the manufacturer id
+   |           |       | Y is a 16 bit word identifying the hardware id
+   |           |       | Z is a 16 bit word identifying the hardware version
+ 4+| 0x12      | HWI u | Sends an interrupt to hardware at port u
+ - | 0x13-0x1F | -     | Reserved for future expansion   
+---+-----------+-------+--------------------------------------------------------
+
+--- Nullary opcodes: 6 bits ----------------------------------------------------
+ C | VALUE     | NAME | DESCRIPTION
+---+-----------+------+---------------------------------------------------------
+ - | 0x00      | NOP  | No Operation
+ - | 0x01      | CLK  | Sets I, J, PS from a 32 bit unsigned monotonically
+   |           |      | increasing cycle clock
+   |           |      | I is set to ((0xFFFF0000 & T) >> 16)
+   |           |      | J is set to ((0x0000FFFF & T) >> 0)
+   |           |      | PS is set to 0x0001 if clock overflows, 0x0000 otherwise
+ - | 0x02-0x3E | -    | Reserved for future expansion
+ 1 | 0x3F      | ERR  | Error Decoding Instruction
+---+-----------+------+---------------------------------------------------------
+
+=== INTERRUPTS =========================================================================================================
+
+// TODO: Rewrite this section
+
+The DCPU-16 will perform at most one interrupt between each instruction. If
+multiple interrupts are triggered at the same time, they are added to a queue.
+If the queue grows longer than 256 interrupts, the DCPU-16 will halt and catch 
+fire. 
+
+When IA is set to something other than 0, interrupts triggered on the VCPU-16
+will turn on interrupt queuing, push PC to the stack, followed by pushing A to
+the stack, then set the PC to IA, and A to the interrupt message.
+ 
+If IA is set to 0, a triggered interrupt does nothing. Software interrupts still
+take up four clock cycles, but immediately return, incoming hardware interrupts
+are ignored. Note that a queued interrupt is considered triggered when it leaves
+the queue, not when it enters it.
+
+Interrupt handlers should end with RFI, which will disable interrupt queuing
+and pop A and PC from the stack as a single atomic instruction.
+IAQ is normally not needed within an interrupt handler, but is useful for time
+critical code.
+
+=== HARDWARE ===================================================================    
+
+The DCPU-16 supports up to 65535 connected hardware devices. These devices can
+be anything from additional storage, sensors, monitors or speakers.
+How to control the hardware is specified per hardware device, but the DCPU-16
+supports a standard enumeration method for detecting connected hardware via
+the HWN, HWQ and HWI instructions.
+
+Interrupts sent to hardware can't contain messages, can take additional cycles,
+and can read or modify any registers or memory addresses on the DCPU-16. This
+behavior changes per hardware device and is described in the hardware's
+documentation.
+
+Hardware must NOT start modifying registers or ram on the DCPU-16 before at
+least one HWI call has been made to the hardware.
+
+The DPCU-16 does not support hot swapping hardware. The behavior of connecting
+or disconnecting hardware while the DCPU-16 is running is undefined.

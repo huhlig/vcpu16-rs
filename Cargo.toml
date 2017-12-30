@@ -1,0 +1,9 @@
+[package]
+name = "vcpu16"
+version = "0.0.1"
+authors = ["Hans W. Uhlig <hans.uhlig@ibm.com>"]
+
+[dependencies]
+
+[dev-dependencies]
+rand = "0.4"
