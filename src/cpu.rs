@@ -2,11 +2,11 @@ use std::io::{Read, Write};
 use std::mem;
 use std::slice;
 
-/// VCPU16 State
+/// VCPU16 Context
 pub struct VCPU16 {
-    mem: [u16; 65536],
-    clk: u64,
-    bsy: u8,
+    mem: Memory,
+    clk: Clock,
+    irq: IRQ,
     pc: u16,
     sp: u16,
     ps: u16,
@@ -19,6 +19,30 @@ pub struct VCPU16 {
     z: u16,
     i: u16,
     j: u16,
+}
+
+/// Memory Array
+struct Memory {
+    /// Memory Buffer
+    buffer: [u16; 65536],
+}
+
+/// Interrupt Request Queue
+struct IRQ {
+    /// Queue of interrupts
+    interrupts: Vec<u16>,
+    /// Has an interrupt been triggered since last instruction
+    triggered: bool,
+}
+
+/// Internal Clock
+struct Clock {
+    /// Cycles since Startup
+    cycles: u64,
+    /// Countdown timer
+    timer: u16,
+    /// Cycles remaining till instruction completes
+    busy: u8,
 }
 
 #[derive(Copy, Clone)]
@@ -47,9 +71,18 @@ impl VCPU16 {
     /// Create a new VCPU16
     pub fn new() -> VCPU16 {
         VCPU16 {
-            mem: [0; 65536],
-            clk: 0,
-            bsy: 0,
+            mem: Memory {
+                buffer: [0; 65536],
+            },
+            clk: Clock {
+                cycles: 0,
+                timer: 0,
+                busy: 0,
+            },
+            irq: IRQ{
+                interrupts: Vec::new(),
+                triggered: false,
+            },
             pc: 0,
             sp: 0,
             ps: 0,
@@ -69,9 +102,9 @@ impl VCPU16 {
     ///
     pub fn load_mem(&mut self, reader: &mut Read) {
         unsafe {
-            let memory_size = mem::size_of_val(&self.mem);
+            let memory_size = mem::size_of_val(&self.mem.buffer);
             let memory_slice = slice::from_raw_parts_mut(
-                &mut self.mem as *mut _ as *mut u8,
+                &mut self.mem.buffer as *mut _ as *mut u8,
                 memory_size,
             );
             reader.read_exact(memory_slice).unwrap();
@@ -82,9 +115,9 @@ impl VCPU16 {
     ///
     pub fn save_mem(&mut self, writer: &mut Write) {
         unsafe {
-            let memory_size = mem::size_of_val(&self.mem);
+            let memory_size = mem::size_of_val(&self.mem.buffer);
             let memory_slice = slice::from_raw_parts_mut(
-                &mut self.mem as *mut _ as *mut u8,
+                &mut self.mem.buffer as *mut _ as *mut u8,
                 memory_size,
             );
             writer.write(memory_slice).unwrap();
@@ -94,25 +127,25 @@ impl VCPU16 {
     /// Write a slice of memory from buffer
     ///
     pub fn write_mem(&mut self, address: u16, buffer: &[u16]) {
-        self.mem[address as usize..buffer.len()].copy_from_slice(buffer)
+        self.mem.buffer[address as usize..buffer.len()].copy_from_slice(buffer)
     }
     ///
     /// Read a slice length of memory at address
     ///
     pub fn read_mem(&mut self, address: u16, length: u16) -> &[u16] {
-        &self.mem[address as usize..length as usize]
+        &self.mem.buffer[address as usize..length as usize]
     }
     ///
     /// Set a single Cell of Memory at address
     ///
     pub fn set_mem(&mut self, address: u16, value: u16) {
-        self.mem[address as usize] = value
+        self.mem.buffer[address as usize] = value
     }
     ///
     /// Get a single Cell of Memory at address
     ///
     pub fn get_mem(&self, address: u16) -> u16 {
-        self.mem[address as usize]
+        self.mem.buffer[address as usize]
     }
     /// Get value of the Program Counter (PC) Register
     pub fn get_pc(&self) -> u16 { self.pc }
@@ -138,8 +171,9 @@ impl VCPU16 {
     pub fn get_i(&self) -> u16 { self.i }
     /// Get value of Register J
     pub fn get_j(&self) -> u16 { self.j }
-    pub fn interrupt() {
-
+    /// Enqueue Interrupt
+    pub fn interrupt(&self, m: u16) {
+        if self.ia != 0 {}
     }
     /// Step through next clock cycle
     pub fn step(&mut self) {
@@ -147,6 +181,8 @@ impl VCPU16 {
         if self.bsy > 0 {
             self.bsy -= 1;
             return;
+        } else if self.itr.len() > 0 {
+
         } else {
             self.execute();
         }
@@ -154,7 +190,7 @@ impl VCPU16 {
     /// Execute Next Instruction
     fn execute(&mut self) {
         let address = self.pc;
-        let word = self.mem[address as usize] as u16;
+        let word = self.mem.buffer[address as usize] as u16;
         fn next_pc(cpu: &mut VCPU16) -> u16 {
             let pc = cpu.pc;
             cpu.bsy += 1;
@@ -392,7 +428,7 @@ impl VCPU16 {
                     // JSR u
                     // Pushes the address of the next instruction to the stack, then sets PC to u
                     self.bsy += 3;
-                    self.mem[push_sp(self) as usize] = self.pc;
+                    self.mem.buffer[push_sp(self) as usize] = self.pc;
                     self.pc = read_arg(self, upper);
                 }
                 0x08 => {
@@ -739,10 +775,10 @@ mod tests {
         XorShiftRng::from_seed([1; 4]).fill_bytes(&mut input[..]);
 
         // Load our input into Memory
-        cpu.load_memory(&mut Cursor::new(&mut input[..]));
+        cpu.load_mem(&mut Cursor::new(&mut input[..]));
 
         // Save our memory to output
-        ram.save(&mut Cursor::new(&mut output[..]));
+        cpu.save_mem(&mut Cursor::new(&mut output[..]));
 
         // Compare buffers
         assert_eq!(&input[..], &output[..]);
@@ -751,33 +787,33 @@ mod tests {
     #[test]
     pub fn test_set_get() {
         // Create our Memory and external buffers
-        let mut ram = Memory::new();
+        let mut cpu = VCPU16::new();
 
         let address: u16 = 0xFFFF;
         let oldvalue: u16 = 0x0000;
         let newvalue: u16 = 0x2222;
 
         // Assert Memory at address equals oldvalue
-        assert_eq!(oldvalue, ram.get(address));
+        assert_eq!(oldvalue, cpu.get_mem(address));
 
         // Set Memory at address to newvalue
-        ram.set(address, newvalue);
+        cpu.set_mem(address, newvalue);
 
         // Assert Memory at address equals newvalue
-        assert_eq!(newvalue, ram.get(address));
+        assert_eq!(newvalue, cpu.get_mem(address));
     }
 
     #[test]
     pub fn test_read_write() {
         // Create our Memory and external buffers
-        let mut ram = Memory::new();
+        let mut cpu = VCPU16::new();
 
         let address: u16 = 0x1111;
         let oldvalue: u16 = 0x0000;
         let newvalue: u16 = 0x2222;
 
         // Assert Memory at address equals oldvalue
-        assert_eq!(oldvalue, ram.get(address));
+        assert_eq!(oldvalue, cpu.get(address));
 
         // Set Memory at address to newvalue
         ram.set(address, newvalue);
