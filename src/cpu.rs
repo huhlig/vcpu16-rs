@@ -10,7 +10,6 @@ pub struct VCPU16 {
     pc: u16,
     sp: u16,
     ps: u16,
-    ia: u16,
     a: u16,
     b: u16,
     c: u16,
@@ -31,12 +30,16 @@ struct Memory {
 struct IRQ {
     /// Queue of interrupts
     interrupts: Vec<u16>,
-    /// Has an interrupt been triggered since last instruction
-    triggered: bool,
+    /// Are interrupt's currently enabled
+    enabled: bool,
+    /// Interrupt Address
+    address: u16,
 }
 
 /// Internal Clock
 struct Clock {
+    /// Is CPU Halted
+    halted: bool,
     /// Cycles since Startup
     cycles: u64,
     /// Countdown timer
@@ -75,18 +78,19 @@ impl VCPU16 {
                 buffer: [0; 65536],
             },
             clk: Clock {
+                halted: false,
                 cycles: 0,
                 timer: 0,
                 busy: 0,
             },
-            irq: IRQ{
+            irq: IRQ {
                 interrupts: Vec::new(),
-                triggered: false,
+                enabled: bool,
+                address: u16,
             },
             pc: 0,
             sp: 0,
             ps: 0,
-            ia: 0,
             a: 0,
             b: 0,
             c: 0,
@@ -124,6 +128,12 @@ impl VCPU16 {
         }
     }
     ///
+    /// Clear Memory
+    ///
+    pub fn clear_mem(&mut self) {
+        self.mem.buffer = [0; 65536];
+    }
+    ///
     /// Write a slice of memory from buffer
     ///
     pub fn write_mem(&mut self, address: u16, buffer: &[u16]) {
@@ -154,7 +164,7 @@ impl VCPU16 {
     /// Get value of the Program Status (PS) Register
     pub fn get_ps(&self) -> u16 { self.ps }
     /// Get value of the Interrupt Address (IA) Register
-    pub fn get_ia(&self) -> u16 { self.ia }
+    pub fn get_ia(&self) -> u16 { self.irq.address }
     /// Get value of Register A
     pub fn get_a(&self) -> u16 { self.a }
     /// Get value of Register B
@@ -172,20 +182,33 @@ impl VCPU16 {
     /// Get value of Register J
     pub fn get_j(&self) -> u16 { self.j }
     /// Enqueue Interrupt
-    pub fn interrupt(&self, m: u16) {
-        if self.ia != 0 {}
+    pub fn interrupt(&mut self, message: u16) {
+        if self.ia != 0 {
+            self.irq.interrupts.push(message);
+        }
     }
     /// Step through next clock cycle
     pub fn step(&mut self) {
-        self.clk += 1;
-        if self.bsy > 0 {
-            self.bsy -= 1;
+        if self.clk.halted {
+            // CPU Halted, No further actions taken
             return;
-        } else if self.itr.len() > 0 {
+        }
+        self.clk.cycles += 1;
+        if self.clk.busy > 0 {
+            // CPU is busy
+            self.clk.busy -= 1;
+        } else if self.irq.enabled && self.irq.interrupts.len() > 0 {
+            let message = self.irq.interrupts.pop().unwrap();
+
+            // Interrupt Queued
 
         } else {
             self.execute();
         }
+    }
+    /// Was CPU Interrupted
+    fn interrupted(&mut self) -> bool {
+
     }
     /// Execute Next Instruction
     fn execute(&mut self) {
@@ -193,9 +216,9 @@ impl VCPU16 {
         let word = self.mem.buffer[address as usize] as u16;
         fn next_pc(cpu: &mut VCPU16) -> u16 {
             let pc = cpu.pc;
-            cpu.bsy += 1;
+            cpu.clk.busy += 1;
             cpu.pc += 1;
-            cpu.mem[pc as usize] as u16
+            cpu.mem.buffer[pc as usize] as u16
         }
         fn push_sp(cpu: &mut VCPU16) -> u16 {
             cpu.sp -= 1;
@@ -209,7 +232,7 @@ impl VCPU16 {
         fn write_arg(cpu: &mut VCPU16, arg: Argument, value: u16) {
             match arg {
                 Argument::Literal(_) => { /* Do nothing */ }
-                Argument::Memory(address) => { cpu.mem[address as usize] = value }
+                Argument::Memory(address) => { cpu.mem.buffer[address as usize] = value }
                 Argument::Register(reg) => {
                     match reg {
                         Register::A => { cpu.a = value }
@@ -230,7 +253,7 @@ impl VCPU16 {
         fn read_arg(cpu: &mut VCPU16, arg: Argument) -> u16 {
             match arg {
                 Argument::Literal(value) => { value }
-                Argument::Memory(address) => { cpu.mem[address as usize] }
+                Argument::Memory(address) => { cpu.mem.buffer[address as usize] }
                 Argument::Register(reg) => {
                     match reg {
                         Register::A => { cpu.a }
@@ -372,10 +395,10 @@ impl VCPU16 {
         fn skip_next(cpu: &mut VCPU16) {
             let word = cpu.pc;
             if (word & 0x3FF) == 0 {
-                cpu.bsy += 1;
+                cpu.clk.busy += 1;
                 cpu.pc += 1;
             } else if (word & 0x001F) == 0 {
-                cpu.bsy += 1;
+                cpu.clk.busy += 1;
                 cpu.pc += 1;
                 match (word & 0xFC00) >> 10 {
                     0x10 => { cpu.pc += 1 }
@@ -392,7 +415,7 @@ impl VCPU16 {
                     _ => {}
                 }
             } else {
-                cpu.bsy += 1;
+                cpu.clk.busy += 1;
                 cpu.pc += 1;
                 match (word & 0x03E0) >> 5 {
                     0x10 => { cpu.pc += 1 }
@@ -427,14 +450,14 @@ impl VCPU16 {
                 0x01 => {
                     // JSR u
                     // Pushes the address of the next instruction to the stack, then sets PC to u
-                    self.bsy += 3;
+                    self.clk.busy += 3;
                     self.mem.buffer[push_sp(self) as usize] = self.pc;
                     self.pc = read_arg(self, upper);
                 }
                 0x08 => {
                     // INT u
                     // Triggers a software interrupt with message u
-                    self.bsy += 4;
+                    self.clk.busy += 4;
                 }
                 _ => { /* Error */ }
             };
@@ -447,14 +470,14 @@ impl VCPU16 {
                 0x01 => {
                     // SET m, u
                     // Sets m to u
-                    self.bsy += 1;
+                    self.clk.busy += 1;
                     let u_val = read_arg(self, u_arg);
                     write_arg(self, m_arg, u_val);
                 }
                 0x02 => {
                     // ADD m, u
                     // Sets m to m + u, sets PS to 0x0001 if there's an overflow, 0x0000 otherwise
-                    self.bsy += 2;
+                    self.clk.busy += 2;
                     let m_val = read_arg(self, m_arg);
                     let u_val = read_arg(self, u_arg);
                     let (result, overflow) = m_val.overflowing_add(u_val);
@@ -468,7 +491,7 @@ impl VCPU16 {
                 0x03 => {
                     // SUB m, u
                     // Sets m to m - u, sets PS to 0xFFFF if there's an underflow, 0x0000 otherwise
-                    self.bsy += 2;
+                    self.clk.busy += 2;
                     let m_val = read_arg(self, m_arg);
                     let u_val = read_arg(self, u_arg);
                     let (result, overflow) = m_val.overflowing_sub(u_val);
@@ -478,7 +501,7 @@ impl VCPU16 {
                 0x04 => {
                     // MUL m, u
                     // Sets m to m * u, sets PS to ((m * u)>>16) & 0xFFFF) (treats m, u as unsigned)
-                    self.bsy += 2;
+                    self.clk.busy += 2;
                     let m_val = read_arg(self, m_arg) as u32;
                     let u_val = read_arg(self, u_arg) as u32;
                     let result = m_val * u_val;
@@ -490,7 +513,7 @@ impl VCPU16 {
                 0x05 => {
                     // MLI m, u
                     // Sets m to (m * u), sets PS to ((m*u)>>16) & 0xFFFF) (treats m, u as signed)
-                    self.bsy += 2;
+                    self.clk.busy += 2;
                     let m_val = read_arg(self, m_arg) as i32;
                     let u_val = read_arg(self, u_arg) as i32;
                     let result = m_val * u_val;
@@ -503,7 +526,7 @@ impl VCPU16 {
                     // DIV m, u
                     // Sets m to m / u, sets PS to ((m<<16)/u)&0xFFFF.
                     // If u==0, sets m and PS to 0 instead. (treats m, u as unsigned)
-                    self.bsy += 3;
+                    self.clk.busy += 3;
                     let m_val = read_arg(self, m_arg) as u32;
                     let u_val = read_arg(self, u_arg) as u32;
                     let (rv, ps) = if u_val != 0 {
@@ -520,7 +543,7 @@ impl VCPU16 {
                     // DVI m, u
                     // Sets m to m / u, sets PS to ((m<<16)/u)&0xFFFF.
                     // If u==0, sets m and PS to 0 instead. (treats m, u as signed)
-                    self.bsy += 3;
+                    self.clk.busy += 3;
                     let m_val = read_arg(self, m_arg) as i32;
                     let u_val = read_arg(self, u_arg) as i32;
                     let (rv, ps) = if u_val != 0 {
@@ -536,7 +559,7 @@ impl VCPU16 {
                 0x08 => {
                     // MOD m, u
                     // Sets m to m % u. if u==0, sets m to 0 instead.
-                    self.bsy += 3;
+                    self.clk.busy += 3;
                     let m_val = read_arg(self, m_arg);
                     let u_val = read_arg(self, u_arg);
                     let rv = if u_val != 0 { m_val % u_val } else { 0 };
@@ -546,7 +569,7 @@ impl VCPU16 {
                     /* MDI m, u */
                     // Sets m to m % u. If u==0, sets m to 0 instead.
                     // (treats m, u as signed [MDI -7, 16 == -7])
-                    self.bsy += 3;
+                    self.clk.busy += 3;
                     let m_val = read_arg(self, m_arg) as i16;
                     let u_val = read_arg(self, u_arg) as i16;
                     let rv = if u_val != 0 { m_val % u_val } else { 0 };
@@ -555,7 +578,7 @@ impl VCPU16 {
                 0x0A => {
                     // AND m, u
                     // Sets m to m & u
-                    self.bsy += 1;
+                    self.clk.busy += 1;
                     let m_val = read_arg(self, m_arg);
                     let u_val = read_arg(self, u_arg);
                     let rv = m_val & u_val;
@@ -564,7 +587,7 @@ impl VCPU16 {
                 0x0B => {
                     // BOR m, u
                     // Sets m to m | u
-                    self.bsy += 1;
+                    self.clk.busy += 1;
                     let m_val = read_arg(self, m_arg);
                     let u_val = read_arg(self, u_arg);
                     let rv = m_val | u_val;
@@ -573,7 +596,7 @@ impl VCPU16 {
                 0x0C => {
                     // XOR m, u
                     // Sets m to m ^ u
-                    self.bsy += 1;
+                    self.clk.busy += 1;
                     let m_val = read_arg(self, m_arg);
                     let u_val = read_arg(self, u_arg);
                     let rv = m_val ^ u_val;
@@ -582,7 +605,7 @@ impl VCPU16 {
                 0x0D => {
                     // LLS m, u
                     // Sets m to m << u, sets PS to ((m<<u)>>16)&0xFFFF (logical left shift)
-                    self.bsy += 1;
+                    self.clk.busy += 1;
                     let m_val = read_arg(self, m_arg);
                     let u_val = read_arg(self, u_arg);
                     let rv = m_val << u_val;
@@ -593,7 +616,7 @@ impl VCPU16 {
                 0x0E => {
                     // LRS m, u
                     // Sets m to m >> u, sets PS to ((m<<16)>>u)&0xFFFF (logical right shift)
-                    self.bsy += 1;
+                    self.clk.busy += 1;
                     let m_val = read_arg(self, m_arg);
                     let u_val = read_arg(self, u_arg);
                     let rv = m_val >> u_val;
@@ -604,7 +627,7 @@ impl VCPU16 {
                 0x0F => {
                     // ARS m, u
                     // Sets m to m >>> u, sets PS to ((m<<16)>>>u)&0xFFFF (arithmetic shift) (treats m as signed)
-                    self.bsy += 1;
+                    self.clk.busy += 1;
                     let m_val = read_arg(self, m_arg) as i16;
                     let u_val = read_arg(self, u_arg) as u16;
                     let rv = m_val >> u_val; // i16 >>> u16
@@ -615,7 +638,7 @@ impl VCPU16 {
                 0x10 => {
                     // IFB m, u
                     // Performs next instruction only if (m & u) != 0
-                    self.bsy += 2;
+                    self.clk.busy += 2;
                     let m_val = read_arg(self, m_arg);
                     let u_val = read_arg(self, u_arg);
                     if m_val & u_val != 0 {
@@ -627,7 +650,7 @@ impl VCPU16 {
                 0x11 => {
                     // IFC m, u
                     // Performs next instruction only if (m & u) == 0
-                    self.bsy += 2;
+                    self.clk.busy += 2;
                     let m_val = read_arg(self, m_arg);
                     let u_val = read_arg(self, u_arg);
                     if m_val & u_val == 0 {
@@ -639,7 +662,7 @@ impl VCPU16 {
                 0x12 => {
                     // IFE m, u
                     // Performs next instruction only if m == u
-                    self.bsy += 2;
+                    self.clk.busy += 2;
                     let m_val = read_arg(self, m_arg);
                     let u_val = read_arg(self, u_arg);
                     if m_val == u_val {
@@ -651,7 +674,7 @@ impl VCPU16 {
                 0x13 => {
                     // IFN m, u
                     // Performs next instruction only if m != u
-                    self.bsy += 2;
+                    self.clk.busy += 2;
                     let m_val = read_arg(self, m_arg);
                     let u_val = read_arg(self, u_arg);
                     if m_val != u_val {
@@ -663,7 +686,7 @@ impl VCPU16 {
                 0x14 => {
                     // IFG m, u
                     // Performs next instruction only if m > u (unsigned)
-                    self.bsy += 2;
+                    self.clk.busy += 2;
                     let m_val = read_arg(self, m_arg);
                     let u_val = read_arg(self, u_arg);
                     if m_val > u_val {
@@ -675,7 +698,7 @@ impl VCPU16 {
                 0x15 => {
                     // IFA m, u
                     // Performs next instruction only if m > u (signed)
-                    self.bsy += 2;
+                    self.clk.busy += 2;
                     let m_val = read_arg(self, m_arg) as i16;
                     let u_val = read_arg(self, u_arg) as i16;
                     if m_val > u_val {
@@ -687,7 +710,7 @@ impl VCPU16 {
                 0x16 => {
                     // IFL m, u
                     // Performs next instruction only if m < u (unsigned)
-                    self.bsy += 2;
+                    self.clk.busy += 2;
                     let m_val = read_arg(self, m_arg);
                     let u_val = read_arg(self, u_arg);
                     if m_val < u_val {
@@ -699,7 +722,7 @@ impl VCPU16 {
                 0x17 => {
                     // IFU m, u
                     // Performs next instruction only if m < u (signed)
-                    self.bsy += 2;
+                    self.clk.busy += 2;
                     let m_val = read_arg(self, m_arg) as i16;
                     let u_val = read_arg(self, u_arg) as i16;
                     if m_val < u_val {
@@ -712,12 +735,12 @@ impl VCPU16 {
                     // ADX m, u
                     // Sets m to m + u + PS, sets PS to 0x0001 if there is an overflow, 0x0000 otherwise
                     // TODO: Figure out Better Logic Here
-                    self.bsy += 3;
+                    self.clk.busy += 3;
                     let m_val = read_arg(self, m_arg) as u32;
                     let u_val = read_arg(self, u_arg) as u32;
-                    let result = m_val + u_val + self.ps;
-                    let rv = result % std::u16::MAX;
-                    let ps = if result / std::u16::MAX > 0 { 0x0001 } else { 0x0000 };
+                    let result = m_val + u_val + self.ps as u32;
+                    let rv = (result % 65_536) as u16;
+                    let ps = if result / 65_536 > 0 { 0x0001 } else { 0x0000 };
                     write_arg(self, m_arg, rv);
                     self.ps = ps;
                 }
@@ -725,19 +748,19 @@ impl VCPU16 {
                     // SBX m, u
                     // Sets m to m - u + PS, sets PS to 0xFFFF if there is an underflow, 0x0000 otherwise
                     // TODO: Figure out Better Logic Here
-                    self.bsy += 3;
+                    self.clk.busy += 3;
                     let m_val = read_arg(self, m_arg) as u32;
                     let u_val = read_arg(self, u_arg) as u32;
-                    let result = m_val - u_val + self.ps;
-                    let rv = result % std::u16::MAX;
-                    let ps = if result / std::u16::MAX > 0 { 0xFFFF } else { 0x0000 };
+                    let result = m_val - u_val + self.ps as u32;
+                    let rv = (result % 65_536) as u16;
+                    let ps = if result / 65_536 > 0 { 0xFFFF } else { 0x0000 };
                     write_arg(self, m_arg, rv);
                     self.ps = ps;
                 }
                 0x1E => {
                     // STI m, u
                     // Sets m to u, then increases I and J by 1
-                    self.bsy += 2;
+                    self.clk.busy += 2;
                     let u_val = read_arg(self, u_arg);
                     write_arg(self, m_arg, u_val);
                     self.i += 1;
@@ -746,7 +769,7 @@ impl VCPU16 {
                 0x1F => {
                     // STD m, u
                     // Sets m to u, then decreases I and J by 1
-                    self.bsy += 2;
+                    self.clk.busy += 2;
                     let u_val = read_arg(self, u_arg);
                     write_arg(self, m_arg, u_val);
                     self.i -= 1;

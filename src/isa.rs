@@ -330,3 +330,15 @@ pub const MNEXT: ValueCode = ValueCode { name: "[NEXT]", code: 0x1E, time: 1, ne
 /// Value: 0x1F, Time: 1, Name: NEXT
 /// Description: Literal of Next Word
 pub const LNEXT: ValueCode = ValueCode { name: "NEXT", code: 0x1F, time: 1, next: true };
+
+
+
+
+
+pub struct Instruction {
+    opcode: u16,
+    address: u16,
+    upper: u16,
+    lower: u16,
+
+}
