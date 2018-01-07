@@ -1,0 +1,1 @@
+//! Decode Binary code into ISA

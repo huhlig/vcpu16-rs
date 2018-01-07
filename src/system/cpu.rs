@@ -3,9 +3,8 @@ use std::mem;
 use std::slice;
 
 /// VCPU16 Context
-pub struct VCPU16 {
-    mem: Memory,
-    clk: Clock,
+pub struct VCPU16<'sys> {
+    sys: &'sys System,
     irq: IRQ,
     pc: u16,
     sp: u16,
