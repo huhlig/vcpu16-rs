@@ -14,7 +14,13 @@
 // limitations under the License.
 //
 
-#[cfg(test)]
-extern crate rand;
+mod cpu;
+mod mem;
+mod pic;
+mod reg;
 
-pub mod system2;
+pub use self::mem::Memory;
+pub use self::reg::Registers;
+
+/// System Word
+pub type Word = u16;

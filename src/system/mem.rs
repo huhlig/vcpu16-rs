@@ -1,3 +1,5 @@
+
+
 /// Memory Array
 pub struct Memory {
     buffer: [u16; 65536],

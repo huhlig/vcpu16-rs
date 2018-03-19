@@ -14,7 +14,21 @@
 // limitations under the License.
 //
 
-#[cfg(test)]
-extern crate rand;
+/// System Clock
+pub struct Clock {
+    halted: bool,
+    cycles: u64,
+}
 
-pub mod system2;
+pub enum State {
+    Idle,
+}
+
+impl Clock {
+    pub fn new() -> Clock {
+        Clock {
+            halted: false,
+            cycles: 0
+        }
+    }
+}
