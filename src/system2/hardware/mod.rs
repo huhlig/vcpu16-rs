@@ -14,16 +14,7 @@
 // limitations under the License.
 //
 
-mod clk;
-mod state;
-mod mem;
-mod pic;
-mod reg;
+///
+trait Hardware {
 
-pub use self::clk::{Clock, ClockError};
-pub use self::mem::{Memory, MemoryError};
-pub use self::pic::{InterruptError, PIC};
-pub use self::reg::Registers;
-
-/// System Word
-pub type Word = u16;
+}

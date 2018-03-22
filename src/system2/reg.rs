@@ -23,6 +23,7 @@ pub struct Registers {
     pub(crate) pc: Word,
     pub(crate) sp: Word,
     pub(crate) ps: Word,
+    pub(crate) ia: Word,
     pub(crate) a: Word,
     pub(crate) b: Word,
     pub(crate) c: Word,
@@ -39,6 +40,7 @@ impl Registers {
             pc: 0,
             sp: 0,
             ps: 0,
+            ia: 0,
             a: 0,
             b: 0,
             c: 0,
@@ -57,6 +59,9 @@ impl Registers {
     }
     pub fn ps(&self) -> Word {
         self.ps
+    }
+    pub fn ia(&self) -> Word {
+        self.ia
     }
     pub fn a(&self) -> Word {
         self.a
@@ -86,17 +91,17 @@ impl Registers {
 
 impl fmt::Display for Registers {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "PC: {:04X}, SP: {:04X}, PS: {:04X}, A: {:04X}, B: {:04X}, C: {:04X}, X: {:04X}, \
-        Y: {:04X}, Z: {:04X}, I: {:04X}, J: {:04X}", self.pc, self.sp, self.ps, self.a, self.b,
-               self.c, self.x, self.y, self.z, self.i, self.j)
+        write!(f, "PC: {:04X}, SP: {:04X}, PS: {:04X}, IA: {:04X}, A: {:04X}, B: {:04X}, C: {:04X}, \
+        X: {:04X}, Y: {:04X}, Z: {:04X}, I: {:04X}, J: {:04X}", self.pc, self.sp, self.ps, self.ia,
+               self.a, self.b, self.c, self.x, self.y, self.z, self.i, self.j)
     }
 }
 
 impl fmt::Debug for Registers {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Registers ( PC: {:04X}, SP: {:04X}, PS: {:04X}, A: {:04X}, B: {:04X}, C: {:04X},\
-         X: {:04X}, Y: {:04X}, Z: {:04X}, I: {:04X}, J: {:04X} )", self.pc, self.sp, self.ps,
-               self.a, self.b, self.c, self.x, self.y, self.z, self.i, self.j)
+        write!(f, "Registers ( PC: {:04X}, SP: {:04X}, PS: {:04X}, IA: {:04X}, A: {:04X}, B: {:04X}, \
+        C: {:04X}, X: {:04X}, Y: {:04X}, Z: {:04X}, I: {:04X}, J: {:04X} )", self.pc, self.sp,
+               self.ps, self.ia, self.a, self.b, self.c, self.x, self.y, self.z, self.i, self.j)
     }
 }
 
@@ -111,4 +116,5 @@ mod tests {
 
         println!("{}", reg);
     }
+
 }

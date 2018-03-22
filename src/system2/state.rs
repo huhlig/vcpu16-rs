@@ -13,3 +13,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+
+use super::Clock;
+use super::Memory;
+use super::PIC;
+use super::Registers;
+
+/// VCPU State
+#[derive(Clone, Debug)]
+pub struct State {
+    clk: Clock,
+    mem: Memory,
+    pic: PIC,
+    reg: Registers,
+}
+
+impl State {
+    pub fn new() -> State {
+        State {
+            clk: Clock::new(),
+            mem: Memory::new(),
+            pic: PIC::new(),
+            reg: Registers::new(),
+        }
+    }
+
+}

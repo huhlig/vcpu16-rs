@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BuildServerSettings">
+    <option name="LOGIN" value="" />
+    <option name="SERVER_URL" value="http://buildserver" />
+    <option name="REMEMBER_ME" value="true" />
+    <option name="USE_IDEA_PROXY_SETTINGS" value="true" />
+    <option name="INSPECTIONS_BUILD_TYPE_IDS" />
+    <option name="DUPLICATES_BUILD_TYPE_IDS" />
+    <option name="COVERAGE_SETTINGS" />
+    <option name="TEST_STATUS_ENABLED" value="true" />
+    <option name="TEST_STATUS_SHOW_SUCCESSFUL" value="false" />
+    <option name="ARTIFACTS_BUILD_TYPE_IDS" />
+    <option name="PERFORM_COMMIT_IF_SUCCESSFUL" value="true" />
+    <option name="PERFORM_COMMIT_IF_NO_NEW_FAILED_TESTS" value="false" />
+    <option name="REQUEST_CONFIRMATON" value="false" />
+    <option name="PRE_TESTED_COMMIT" value="true" />
+    <option name="FILTER_BY_STATUS" value="false" />
+    <option name="FILTER_MARKED_AS_FIXED" value="false" />
+    <option name="SHOW_CLOSE_PROMPT" value="true" />
+    <option name="TOOL_WINDOW_SELECTED_CONTENT_INDEX" value="0" />
+    <option name="FILTER_BY_CURRENT_PROJECT" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true" buildAllGenerated="false">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a82f46df-3b63-4ac0-8ea4-f691fcda09b0" name="Default" comment="Shifting Data Structure">
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcpu16-rs.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/system2/hardware/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/.cargo-lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/.fingerprint/libc-38f612cb4f276827/dep-lib-libc-38f612cb4f276827" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/.fingerprint/libc-38f612cb4f276827/lib-libc-38f612cb4f276827" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/.fingerprint/libc-38f612cb4f276827/lib-libc-38f612cb4f276827.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/.fingerprint/rand-5dd9ebb60a588a54/dep-lib-rand-5dd9ebb60a588a54" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/.fingerprint/rand-5dd9ebb60a588a54/lib-rand-5dd9ebb60a588a54" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/.fingerprint/rand-5dd9ebb60a588a54/lib-rand-5dd9ebb60a588a54.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/.fingerprint/vcpu16-3febbca3d481a909/dep-lib-vcpu16-3febbca3d481a909" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/.fingerprint/vcpu16-3febbca3d481a909/lib-vcpu16-3febbca3d481a909" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/.fingerprint/vcpu16-3febbca3d481a909/lib-vcpu16-3febbca3d481a909.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/.fingerprint/vcpu16-568b72dc7c5d0a2a/dep-test-lib-vcpu16-568b72dc7c5d0a2a" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/.fingerprint/vcpu16-568b72dc7c5d0a2a/test-lib-vcpu16-568b72dc7c5d0a2a" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/.fingerprint/vcpu16-568b72dc7c5d0a2a/test-lib-vcpu16-568b72dc7c5d0a2a.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/deps/libc-38f612cb4f276827.d" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/deps/liblibc-38f612cb4f276827.rlib" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/deps/librand-5dd9ebb60a588a54.rlib" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/deps/libvcpu16-3febbca3d481a909.rlib" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/deps/rand-5dd9ebb60a588a54.d" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/deps/vcpu16-3febbca3d481a909.d" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/deps/vcpu16-568b72dc7c5d0a2a" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/deps/vcpu16-568b72dc7c5d0a2a.d" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/deps/vcpu16-568b72dc7c5d0a2a.dSYM/Contents/Info.plist" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/deps/vcpu16-568b72dc7c5d0a2a.dSYM/Contents/Resources/DWARF/vcpu16-568b72dc7c5d0a2a" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/libvcpu16.d" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/libvcpu16.rlib" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/vcpu16-568b72dc7c5d0a2a" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/debug/vcpu16-568b72dc7c5d0a2a.d" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/system2/clk.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/system2/clk.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/system2/cpu.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/system2/state.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/system2/mem.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/system2/mem.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/system2/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/system2/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/system2/pic.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/system2/pic.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/system2/reg.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/system2/reg.rs" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="mem.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/system2/mem.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="238">
+              <caret line="30" column="22" selection-start-line="30" selection-start-column="22" selection-end-line="30" selection-end-column="22" />
+              <folding>
+                <element signature="e#2175#2176#0" expanded="true" />
+                <element signature="e#2215#2216#0" expanded="true" />
+                <element signature="e#3152#3153#0" expanded="true" />
+                <element signature="e#3204#3205#0" expanded="true" />
+                <element signature="e#3314#3315#0" expanded="true" />
+                <element signature="e#3358#3359#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pic.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/system2/pic.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <folding>
+                <element signature="e#2581#2582#0" expanded="true" />
+                <element signature="e#2635#2636#0" expanded="true" />
+                <element signature="e#2671#2672#0" expanded="true" />
+                <element signature="e#2725#2726#0" expanded="true" />
+                <element signature="e#2764#2765#0" expanded="true" />
+                <element signature="e#2791#2792#0" expanded="true" />
+                <element signature="e#2831#2832#0" expanded="true" />
+                <element signature="e#2859#2860#0" expanded="true" />
+                <element signature="e#3041#3042#0" expanded="true" />
+                <element signature="e#3075#3076#0" expanded="true" />
+                <element signature="e#3107#3108#0" expanded="true" />
+                <element signature="e#3142#3143#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="mod.rs" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/system2/hardware/mod.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="17" column="16" lean-forward="true" selection-start-line="17" selection-start-column="16" selection-end-line="17" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="dcpu16.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/docs/dcpu/dcpu16.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2787" />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="state.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/system2/state.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="176">
+              <caret line="23" selection-start-line="23" selection-end-line="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="clk.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/system2/clk.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="249">
+              <caret line="17" selection-start-line="17" selection-end-line="17" selection-end-column="44" />
+              <folding>
+                <element signature="e#865#866#0" expanded="true" />
+                <element signature="e#891#892#0" expanded="true" />
+                <element signature="e#893#894#0" expanded="true" />
+                <element signature="e#919#920#0" expanded="true" />
+                <element signature="e#1134#1135#0" expanded="true" />
+                <element signature="e#1165#1166#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="reg.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/system2/reg.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="402">
+              <caret line="118" selection-start-line="118" selection-end-line="118" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Rust File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/system/cpu.rs" />
+        <option value="$PROJECT_DIR$/src/system/mem.rs" />
+        <option value="$PROJECT_DIR$/src/lib.rs" />
+        <option value="$PROJECT_DIR$/src/system/mod.rs" />
+        <option value="$PROJECT_DIR$/src/system2/clk.rs" />
+        <option value="$PROJECT_DIR$/src/system2/mem.rs" />
+        <option value="$PROJECT_DIR$/src/system2/pic.rs" />
+        <option value="$PROJECT_DIR$/src/system2/reg.rs" />
+        <option value="$PROJECT_DIR$/src/system2/hardware/mod.rs" />
+        <option value="$PROJECT_DIR$/src/system2/mod.rs" />
+        <option value="$PROJECT_DIR$/src/system2/cpu.rs" />
+        <option value="$PROJECT_DIR$/src/system2/state.rs" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="y" value="23" />
+    <option name="width" value="1440" />
+    <option name="height" value="830" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="vcpu16-rs" type="b2602c69:ProjectViewProjectNode" />
+              <item name="vcpu16-rs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="vcpu16-rs" type="b2602c69:ProjectViewProjectNode" />
+              <item name="vcpu16-rs" type="462c0819:PsiDirectoryNode" />
+              <item name="docs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="vcpu16-rs" type="b2602c69:ProjectViewProjectNode" />
+              <item name="vcpu16-rs" type="462c0819:PsiDirectoryNode" />
+              <item name="docs" type="462c0819:PsiDirectoryNode" />
+              <item name="dcpu" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="vcpu16-rs" type="b2602c69:ProjectViewProjectNode" />
+              <item name="vcpu16-rs" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="vcpu16-rs" type="b2602c69:ProjectViewProjectNode" />
+              <item name="vcpu16-rs" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="system" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="vcpu16-rs" type="b2602c69:ProjectViewProjectNode" />
+              <item name="vcpu16-rs" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="system2" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="vcpu16-rs" type="b2602c69:ProjectViewProjectNode" />
+              <item name="vcpu16-rs" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="system2" type="462c0819:PsiDirectoryNode" />
+              <item name="hardware" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
+    <property name="settings.editor.selected.configurable" value="fileTemplates" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="Test All" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+      <option name="channel" value="DEFAULT" />
+      <option name="command" value="test --all" />
+      <option name="nocapture" value="true" />
+      <option name="backtrace" value="SHORT" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs>
+        <env name="RUST_BACKTRACE" value="full" />
+        <env name="RUST_TEST_THREADS" value="1" />
+      </envs>
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a82f46df-3b63-4ac0-8ea4-f691fcda09b0" name="Default" comment="" />
+      <created>1521410832501</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1521410832501</updated>
+      <workItem from="1521410835369" duration="46215000" />
+    </task>
+    <task id="LOCAL-00001" summary="Shifting Data Structure">
+      <created>1521465745871</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1521465745871</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="46215000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="23" width="1440" height="830" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24964234" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="right" id="Cargo" />
+      <window_info anchor="bottom" id="Messages" weight="0.3292517" />
+      <window_info anchor="bottom" id="TeamCity" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.33015007" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info id="Favorites" side_tool="true" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Shifting Data Structure" />
+    <option name="LAST_COMMIT_MESSAGE" value="Shifting Data Structure" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="org.rust.debugger.RsLineBreakpointType">
+          <url>file://$PROJECT_DIR$/src/system/cpu.rs</url>
+          <line>1</line>
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="1" />
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/LICENSE.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="10" column="1" lean-forward="true" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/system/clock.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/system/bus.rs">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/system/mem.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2295">
+          <caret line="159" column="1" selection-end-line="159" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/system/cpu.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="2" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="15" selection-start-line="19" selection-start-column="8" selection-end-line="19" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/system/mod.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="356">
+          <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/system/pic.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="18" column="16" lean-forward="true" selection-start-line="18" selection-start-column="16" selection-end-line="18" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/docs/dcpu/dcpu16.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2787" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/system2/clk.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="249">
+          <caret line="17" selection-start-line="17" selection-end-line="17" selection-end-column="44" />
+          <folding>
+            <element signature="e#865#866#0" expanded="true" />
+            <element signature="e#891#892#0" expanded="true" />
+            <element signature="e#893#894#0" expanded="true" />
+            <element signature="e#919#920#0" expanded="true" />
+            <element signature="e#1134#1135#0" expanded="true" />
+            <element signature="e#1165#1166#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/system2/mem.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="30" column="22" selection-start-line="30" selection-start-column="22" selection-end-line="30" selection-end-column="22" />
+          <folding>
+            <element signature="e#2175#2176#0" expanded="true" />
+            <element signature="e#2215#2216#0" expanded="true" />
+            <element signature="e#3152#3153#0" expanded="true" />
+            <element signature="e#3204#3205#0" expanded="true" />
+            <element signature="e#3314#3315#0" expanded="true" />
+            <element signature="e#3358#3359#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/system2/reg.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="402">
+          <caret line="118" selection-start-line="118" selection-end-line="118" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/system2/pic.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#2581#2582#0" expanded="true" />
+            <element signature="e#2635#2636#0" expanded="true" />
+            <element signature="e#2671#2672#0" expanded="true" />
+            <element signature="e#2725#2726#0" expanded="true" />
+            <element signature="e#2764#2765#0" expanded="true" />
+            <element signature="e#2791#2792#0" expanded="true" />
+            <element signature="e#2831#2832#0" expanded="true" />
+            <element signature="e#2859#2860#0" expanded="true" />
+            <element signature="e#3041#3042#0" expanded="true" />
+            <element signature="e#3075#3076#0" expanded="true" />
+            <element signature="e#3107#3108#0" expanded="true" />
+            <element signature="e#3142#3143#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/system2/mod.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="24" column="41" selection-start-line="24" selection-start-column="41" selection-end-line="24" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/system2/state.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="23" selection-start-line="23" selection-end-line="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/system2/hardware/mod.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="16" lean-forward="true" selection-start-line="17" selection-start-column="16" selection-end-line="17" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

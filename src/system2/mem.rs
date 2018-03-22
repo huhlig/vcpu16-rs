@@ -21,7 +21,14 @@ use std::io::{Read, Write};
 use std::mem;
 use std::slice;
 
+/// Memory Access Errors
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum MemoryError {
+    AddressOverflow,
+}
+
 /// Memory Array
+#[derive(Clone, Copy)]
 pub struct Memory {
     pub(crate) buffer: [Word; 65536],
 }
@@ -70,14 +77,24 @@ impl Memory {
     ///
     /// Write a slice of memory from buffer
     ///
-    pub fn write(&mut self, address: Word, buffer: &[Word]) {
-        self.buffer[address as usize..buffer.len()].copy_from_slice(buffer)
+    pub fn write(&mut self, address: Word, buffer: &[Word]) -> Result<(), MemoryError> {
+        if address as usize + buffer.len() > 65535 {
+            return Err(MemoryError::AddressOverflow);
+        }
+        let start = address as usize;
+        let end = start + buffer.len();
+        Ok(self.buffer[start..end].copy_from_slice(buffer))
     }
     ///
     /// Read a slice length of memory at address
     ///
-    pub fn read(&mut self, address: Word, length: Word) -> &[Word] {
-        &self.buffer[address as usize..length as usize]
+    pub fn read(&mut self, address: Word, length: Word) -> Result<&[Word], MemoryError> {
+        if address as usize + length as usize > 65535 {
+            return Err(MemoryError::AddressOverflow);
+        }
+        let start = address as usize;
+        let end = start + length as usize;
+        Ok(&self.buffer[start..end as usize])
     }
     ///
     /// Set a single Cell of Memory at address
@@ -158,19 +175,19 @@ mod tests {
         let dirty_buffer: [Word; 16] = [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0];
 
         // Assert Buffer written
-        assert_eq!(&empty_buffer[..], mem.read(read_address, 16));
+        assert_eq!(&empty_buffer[..], mem.read(read_address, 16).unwrap());
 
         // Write buffer
-        mem.write(write_address, &write_buffer);
+        mem.write(write_address, &write_buffer).unwrap();
 
         // Assert Data Written
-        assert_eq!(&dirty_buffer[..], mem.read(read_address, 16));
+        assert_eq!(&dirty_buffer[..], mem.read(read_address, 16).unwrap());
 
         // Clear memory
         mem.clear();
 
         // Assert Data Cleared
-        assert_eq!(&empty_buffer[..], mem.read(read_address, 16));
+        assert_eq!(&empty_buffer[..], mem.read(read_address, 16).unwrap());
     }
 
     #[test]
