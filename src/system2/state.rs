@@ -18,9 +18,10 @@ use super::Clock;
 use super::Memory;
 use super::PIC;
 use super::Registers;
+use std::fmt;
 
 /// VCPU State
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct State {
     clk: Clock,
     mem: Memory,
@@ -38,4 +39,16 @@ impl State {
         }
     }
 
+}
+
+impl fmt::Display for State {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "")
+    }
+}
+
+impl fmt::Debug for State {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "")
+    }
 }

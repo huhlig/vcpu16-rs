@@ -1,6 +1,7 @@
 
 
 /// Memory Array
+#[derive(Clone)]
 pub struct Memory {
     buffer: [u16; 65536],
 }
@@ -72,8 +73,22 @@ impl Memory {
     }
 }
 
-impl std::fmt::Display for Memory {
-    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result<(), Error> {
+impl fmt::Display for Memory {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result<(), Error> {
+        write!(f, "          0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F");
+        for o in 0..65536.step_by(16) {
+            write!(f, "0x{:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X}", o,
+                   self.buffer[o + 0x0], self.buffer[o + 0x1], self.buffer[o + 0x2], self.buffer[o + 0x3],
+                   self.buffer[o + 0x4], self.buffer[o + 0x5], self.buffer[o + 0x6], self.buffer[o + 0x7],
+                   self.buffer[o + 0x8], self.buffer[o + 0x9], self.buffer[o + 0xA], self.buffer[o + 0xB],
+                   self.buffer[o + 0xC], self.buffer[o + 0xD], self.buffer[o + 0xE], self.buffer[o + 0xF]
+            );
+        }
+    }
+}
+
+impl fmt::Debug for Memory {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result<(), Error> {
         write!(f, "          0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F");
         for o in 0..65536.step_by(16) {
             write!(f, "0x{:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X} {:04X}", o,

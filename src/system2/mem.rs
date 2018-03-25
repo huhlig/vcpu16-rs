@@ -28,7 +28,7 @@ pub enum MemoryError {
 }
 
 /// Memory Array
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct Memory {
     pub(crate) buffer: [Word; 65536],
 }
@@ -111,6 +111,32 @@ impl Memory {
 }
 
 impl fmt::Display for Memory {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "Memory    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F")?;
+        for base in (0..4096usize).map(|o| o * 16) {  // for o in (0..65536).step_by(16) {
+            write!(f, "0x{:04X}", base)?;
+            for offset in 0..16usize {
+                write!(f, " {:04X}", self.buffer[base + offset])?;
+            }
+            write!(f, " ")?;
+            for offset in 0..16usize {
+                if let Some(ch) = char::from_u32(self.buffer[base + offset] as u32) {
+                    if ch.is_ascii_alphanumeric() {
+                        write!(f, "{}", ch)?;
+                    } else {
+                        write!(f, "{}", '.')?;
+                    }
+                } else {
+                    write!(f, "{}", '.')?;
+                }
+            }
+            writeln!(f, " ")?;
+        }
+        Ok(())
+    }
+}
+
+impl fmt::Debug for Memory {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeln!(f, "Memory    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F")?;
         for base in (0..4096usize).map(|o| o * 16) {  // for o in (0..65536).step_by(16) {

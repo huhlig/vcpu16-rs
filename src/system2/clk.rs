@@ -14,6 +14,8 @@
 // limitations under the License.
 //
 
+use std::fmt;
+
 /// Clock Errors
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum ClockError {
@@ -22,7 +24,7 @@ pub enum ClockError {
 }
 
 /// System Clock
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 pub struct Clock {
     halted: bool,
     cycles: u64,
@@ -56,6 +58,19 @@ impl Clock {
     /// Halt Clock
     pub fn halt(&mut self) {
         self.halted = true;
+    }
+}
+
+
+impl fmt::Display for Clock {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "Clock Halted: {} Cycles: {}", self.halted, self.cycles)
+    }
+}
+
+impl fmt::Debug for Clock {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "Clock Halted: {} Cycles: {}", self.halted, self.cycles)
     }
 }
 
