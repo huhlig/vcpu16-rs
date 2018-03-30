@@ -14,16 +14,26 @@
 // limitations under the License.
 //
 
+use super::Clock;
+use super::Memory;
+use super::PIC;
+use super::Registers;
+use std::fmt;
 
-mod clk;
-mod mem;
-mod pic;
+/// A System is a container for all Hardware.
+/// A Primary CPU always exists in Hardware Slot 0.
+pub struct System {
+    bus: Vec<Box<Hardware>>,
+    mem: Memory,
+    clk: Clock,
+}
 
-pub mod hardware;
-
-pub use self::clk::{Clock, ClockError};
-pub use self::mem::{Memory, MemoryError};
-pub use self::pic::{InterruptError, PIC};
-
-/// System Word
-pub type Word = u16;
+impl System {
+    pub fn new() -> System {
+        System {
+            bus: vec![],
+            mem: Memory::new(),
+            clk: Clock::new(),
+        }
+    }
+}
