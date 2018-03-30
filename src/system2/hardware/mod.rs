@@ -29,10 +29,10 @@ trait Hardware {
     fn mfg_id(&self) -> Word;
     /// Get Hardware ID
     fn hdw_id(&self) -> Word;
-    /// Get Bus ID
-    fn bus_id(&self) -> Word;
+    /// Get Device ID
+    fn dev_id(&self) -> Word;
     /// Trigger Device Interrupt
     fn interrupt(&mut self, value: Word);
     /// Increment Device one Cycle
-    fn update(&mut self, clk: Clock, mem: Memory);
+    fn update(&mut self, bus: Bus, clk: Clock, mem: Memory);
 }

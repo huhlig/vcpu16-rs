@@ -14,49 +14,12 @@
 // limitations under the License.
 //
 
+mod cpu;
+mod irq;
 mod reg;
 
-use self::reg::Registers;
-use super::PIC;
 use super::Word;
 
-pub struct VCPU16 {
-    bus: Word,
-    reg: Registry,
-    pic: PIC,
-}
-
-impl VCPU16 {
-    pub fn new(bus_id: Word) -> VCPU16 {
-        VCPU16 {
-            bus: bus_id,
-            reg: Registers::new(),
-            pic: PIC::new(),
-        }
-    }
-}
-
-impl Hardware for VCPU16 {
-    /// Get Manufacturer ID
-    fn mfg_id(&self) -> Word {
-        0x0000u16
-    }
-    /// Get Hardware ID
-    fn hdw_id(&self) -> Word {
-        0x0000u16
-    }
-    fn bus_id(&self) -> Word {
-        self.bus
-    }
-    /// Trigger Device Interrupt
-    fn interrupt(&mut self, value: Word) {
-        match self.pic.enqueue(word) {
-            Err(err) => (), // Handle Error
-            Ok() => (),
-        }
-    }
-    /// Increment Device one Cycle
-    fn update(&mut self, clk: Clock, mem: Memory) {
-        // Handle CPU
-    }
-}
+pub use self::cpu::VCPU16;
+pub use self::irq::{IRQ, IRQError};
+pub use self::reg::Registers;

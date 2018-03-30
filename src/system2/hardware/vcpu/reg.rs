@@ -17,20 +17,26 @@
 use super::Word;
 use std::fmt;
 
-/// VCPU16 Registers
+/// VCPU16 Internal Registers
 #[derive(Clone, Copy)]
 pub struct Registers {
-    pub(crate) pc: Word,
+    /// Stack Pointer
     pub(crate) sp: Word,
+    /// Program Counter
+    pub(crate) pc: Word,
+    /// Program Status
     pub(crate) ps: Word,
+    /// Interrupt Address
     pub(crate) ia: Word,
+    /// Register A
     pub(crate) a: Word,
+    /// Register B
     pub(crate) b: Word,
+    /// Register C
     pub(crate) c: Word,
-    pub(crate) x: Word,
-    pub(crate) y: Word,
-    pub(crate) z: Word,
+    /// Register I
     pub(crate) i: Word,
+    /// Register J
     pub(crate) j: Word,
 }
 
@@ -44,9 +50,6 @@ impl Registers {
             a: 0,
             b: 0,
             c: 0,
-            x: 0,
-            y: 0,
-            z: 0,
             i: 0,
             j: 0,
         }
@@ -72,20 +75,11 @@ impl Registers {
     pub fn c(&self) -> Word {
         self.c
     }
-    pub fn x(&self) -> Word {
-        self.x
-    }
-    pub fn y(&self) -> Word {
-        self.y
-    }
-    pub fn z(&self) -> Word {
-        self.z
-    }
     pub fn i(&self) -> Word {
-        self.a
+        self.i
     }
     pub fn j(&self) -> Word {
-        self.a
+        self.j
     }
 }
 

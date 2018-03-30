@@ -20,7 +20,7 @@ use super::Word;
 /// Errors Returned while Interacting
 /// with the Programmable Interrupt Controller
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum InterruptError {
+pub enum IRQError {
     /// Queue is Empty during a dequeue
     QueueEmpty,
     /// Queue is Full during an enqueue
@@ -29,18 +29,18 @@ pub enum InterruptError {
     Enabled,
 }
 
-/// Programmable Interrupt Controller
+/// Interrupt Request Queue
 #[derive(Clone, Copy)]
-pub struct PIC {
+pub struct IRQ {
     interrupts: [Word; 256],
     enabled: bool,
     write: u8,
     read: u8,
 }
 
-impl fmt::Debug for PIC {
+impl fmt::Debug for IRQ {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "PIC ( Disabled: {} Queue: ", self.enabled)?;
+        write!(f, "IRQ ( Disabled: {} Queue: ", self.enabled)?;
         if self.read < self.write {
             write!(f, "[")?;
             for i in &self.interrupts[self.read as usize..self.write as usize] {
@@ -63,9 +63,9 @@ impl fmt::Debug for PIC {
     }
 }
 
-impl PIC {
-    pub fn new() -> PIC {
-        PIC {
+impl IRQ {
+    pub fn new() -> IRQ {
+        IRQ {
             interrupts: [0; 256],
             enabled: false,
             write: 0,
@@ -90,17 +90,17 @@ impl PIC {
     pub fn disable(&mut self) {
         self.enabled = false
     }
-    pub fn enqueue(&mut self, value: Word) -> Result<(), InterruptError> {
+    pub fn enqueue(&mut self, value: Word) -> Result<(), IRQError> {
         if self.write.wrapping_add(1) == self.read {
-            return Err(InterruptError::QueueFull);
+            return Err(IRQError::QueueFull);
         }
         self.interrupts[self.write as usize] = value;
         self.write = self.write.wrapping_add(1);
         Ok(())
     }
-    pub fn dequeue(&mut self) -> Result<Word, InterruptError> {
+    pub fn dequeue(&mut self) -> Result<Word, IRQError> {
         if self.read == self.write {
-            return Err(InterruptError::QueueEmpty);
+            return Err(IRQError::QueueEmpty);
         }
         let value = self.interrupts[self.read as usize];
         self.read = self.read.wrapping_add(1);
@@ -111,34 +111,34 @@ impl PIC {
 
 #[cfg(test)]
 mod tests {
-    use super::{InterruptError, PIC};
+    use super::{IRQError, IRQ};
 
     #[test]
     pub fn test_pic() {
-        let mut pic = PIC::new();
+        let mut irq = IRQ::new();
 
-        assert!(pic.is_empty());
-        assert!(pic.is_disabled());
+        assert!(irq.is_empty());
+        assert!(irq.is_disabled());
         for input in 0..512u16 {
-            pic.enqueue(input).unwrap();
-            pic.enable();
-            assert!(pic.is_enabled());
-            let output = pic.dequeue().unwrap();
+            irq.enqueue(input).unwrap();
+            irq.enable();
+            assert!(irq.is_enabled());
+            let output = irq.dequeue().unwrap();
             assert_eq!(input, output);
-            pic.disable();
+            irq.disable();
         }
     }
 
     #[test]
     pub fn test_fill() {
-        let mut pic = PIC::new();
+        let mut irq = IRQ::new();
 
-        assert!(pic.is_empty());
-        assert!(pic.is_disabled());
+        assert!(irq.is_empty());
+        assert!(irq.is_disabled());
         for input in 0..255u16 {
-            pic.enqueue(input).unwrap();
+            irq.enqueue(input).unwrap();
         }
 
-        assert_eq!(InterruptError::QueueFull, pic.enqueue(0).unwrap_err());
+        assert_eq!(IRQError::QueueFull, irq.enqueue(0).unwrap_err());
     }
 }

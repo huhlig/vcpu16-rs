@@ -14,16 +14,19 @@
 // limitations under the License.
 //
 
-
-mod clk;
-mod mem;
+mod bus;
+mod clock;
+mod memory;
 mod pic;
+mod system;
 
 pub mod hardware;
 
-pub use self::clk::{Clock, ClockError};
-pub use self::mem::{Memory, MemoryError};
-pub use self::pic::{InterruptError, PIC};
+pub use self::bus::Bus;
+pub use self::clock::{Clock, ClockError};
+pub use self::memory::{Memory, MemoryError};
+pub use self::pic::PIC;
+pub use self::system::{System, SystemError};
 
 /// System Word
 pub type Word = u16;

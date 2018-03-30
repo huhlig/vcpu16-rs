@@ -47,7 +47,7 @@ impl Clock {
         self.cycles
     }
     /// Advance Clock if not halted
-    pub fn advance(&mut self) -> Result<u64, ClockError> {
+    pub fn step(&mut self) -> Result<u64, ClockError> {
         if self.halted {
             Err(ClockError::Halted)
         } else {
@@ -60,7 +60,6 @@ impl Clock {
         self.halted = true;
     }
 }
-
 
 impl fmt::Display for Clock {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -84,7 +83,7 @@ mod tests {
 
         for expected in 0..200u64 {
             assert_eq!(expected, clk.cycles());
-            clk.advance().unwrap();
+            clk.step().unwrap();
         }
         clk.halt();
         assert!(clk.halted())

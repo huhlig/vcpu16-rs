@@ -14,26 +14,38 @@
 // limitations under the License.
 //
 
+use super::Bus;
 use super::Clock;
 use super::Memory;
-use super::PIC;
-use super::Registers;
+use super::hardware::VCPU16;
 use std::fmt;
 
 /// A System is a container for all Hardware.
 /// A Primary CPU always exists in Hardware Slot 0.
 pub struct System {
-    bus: Vec<Box<Hardware>>,
-    mem: Memory,
-    clk: Clock,
+    hardware: Vec<Box<Hardware>>,
+    memory: Memory,
+    clock: Clock,
+    bus: Bus,
 }
 
 impl System {
+    /// Create a new System
     pub fn new() -> System {
         System {
-            bus: vec![],
-            mem: Memory::new(),
-            clk: Clock::new(),
+            hardware: vec![VCPU16::new(0)],
+            memory: Memory::new(),
+            clock: Clock::new(),
+            bus: Bus::new(),
+        }
+    }
+    /// Step the System forward one clock cycle
+    pub fn step(&mut self) -> Result<(), Box<Error>> {
+        // Advance the clock
+        self.clk.step()?;
+        // Iterate through Hardware
+        for device in &self.hardware {
+            device.update(self.bus, self.clock, self.memory)?;
         }
     }
 }
