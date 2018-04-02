@@ -21,23 +21,31 @@ use std::fmt;
 #[derive(Clone, Copy)]
 pub struct Registers {
     /// Stack Pointer
-    pub(crate) sp: Word,
+    pub sp: Word,
     /// Program Counter
-    pub(crate) pc: Word,
+    pub pc: Word,
     /// Program Status
-    pub(crate) ps: Word,
+    pub ps: Word,
     /// Interrupt Address
-    pub(crate) ia: Word,
+    pub ia: Word,
+    /// System Flags
+    pub sf: Word,
     /// Register A
-    pub(crate) a: Word,
+    pub a: Word,
     /// Register B
-    pub(crate) b: Word,
+    pub b: Word,
     /// Register C
-    pub(crate) c: Word,
+    pub c: Word,
+    /// Register X
+    pub x: Word,
+    /// Register Y
+    pub y: Word,
+    /// Register Z
+    pub z: Word,
     /// Register I
-    pub(crate) i: Word,
+    pub i: Word,
     /// Register J
-    pub(crate) j: Word,
+    pub j: Word,
 }
 
 impl Registers {
@@ -47,39 +55,16 @@ impl Registers {
             sp: 0,
             ps: 0,
             ia: 0,
+            sf: 0,
             a: 0,
             b: 0,
             c: 0,
+            x: 0,
+            y: 0,
+            z: 0,
             i: 0,
             j: 0,
         }
-    }
-    pub fn pc(&self) -> Word {
-        self.pc
-    }
-    pub fn sp(&self) -> Word {
-        self.sp
-    }
-    pub fn ps(&self) -> Word {
-        self.ps
-    }
-    pub fn ia(&self) -> Word {
-        self.ia
-    }
-    pub fn a(&self) -> Word {
-        self.a
-    }
-    pub fn b(&self) -> Word {
-        self.b
-    }
-    pub fn c(&self) -> Word {
-        self.c
-    }
-    pub fn i(&self) -> Word {
-        self.i
-    }
-    pub fn j(&self) -> Word {
-        self.j
     }
 }
 
@@ -110,5 +95,4 @@ mod tests {
 
         println!("{}", reg);
     }
-
 }

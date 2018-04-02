@@ -16,36 +16,53 @@
 
 use super::Bus;
 use super::Clock;
+use super::Hardware;
 use super::Memory;
-use super::hardware::VCPU16;
+use super::State;
+use super::SystemError;
 use std::fmt;
 
 /// A System is a container for all Hardware.
 /// A Primary CPU always exists in Hardware Slot 0.
 pub struct System {
+    /// System Registers
+    registers: Registers,
+    /// System Hardware
     hardware: Vec<Box<Hardware>>,
+    /// System Memory
     memory: Memory,
+    /// System Clock
     clock: Clock,
-    bus: Bus,
+    /// System State
+    state: State,
+    /// System Interrupt Controller
+    pic: SIC,
 }
 
 impl System {
     /// Create a new System
     pub fn new() -> System {
         System {
-            hardware: vec![VCPU16::new(0)],
+            registers: Registers::new(),
+            hardware: Vec::new(),
             memory: Memory::new(),
             clock: Clock::new(),
-            bus: Bus::new(),
+            state: State::Idle,
+            pic: PIC::new(),
         }
     }
     /// Step the System forward one clock cycle
-    pub fn step(&mut self) -> Result<(), Box<Error>> {
+    pub fn step(&mut self) -> Result<(), SystemError> {
         // Advance the clock
-        self.clk.step()?;
+        self.clock.step()?;
+        // Update the CPU
+
+
         // Iterate through Hardware
         for device in &self.hardware {
-            device.update(self.bus, self.clock, self.memory)?;
+            //registers: &Registers, memory: &Memory, clock: &Clock, pic: &PIC
+            device.update(&self.clock, &mut self.registers, &mut self.memory, &mut PIC)?;
         }
     }
 }
+

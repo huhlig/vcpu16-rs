@@ -14,12 +14,31 @@
 // limitations under the License.
 //
 
-mod cpu;
-mod irq;
-mod reg;
+/// CPU State
+pub enum State {
+    Idle,
+    Fetch {
+        address: Word,
+    },
+    Decode {
+        address: Word,
+    },
+    Execute {
+        address: Word,
+    },
+}
 
-use super::Word;
+pub enum Opcode {
+    Unary,
+    Binary,
+    Trinary,
+}
 
-pub use self::cpu::VCPU16;
-pub use self::irq::{IRQ, IRQError};
-pub use self::reg::Registers;
+pub enum Instruction {
+
+}
+
+pub enum Location {
+    Literal(Word),
+    Memory(Word),
+}

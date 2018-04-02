@@ -14,13 +14,11 @@
 // limitations under the License.
 //
 
-mod vcpu;
-
-pub use self::vcpu::VCPU16;
-
 use super::Clock;
 use super::Memory;
 use super::PIC;
+use super::Registers;
+use super::SSystemError;
 use super::Word;
 
 /// Hardware Trait
@@ -32,7 +30,7 @@ trait Hardware {
     /// Get Device ID
     fn dev_id(&self) -> Word;
     /// Trigger Device Interrupt
-    fn interrupt(&mut self, value: Word);
+    fn interrupt(&mut self, value: Word) -> SystemError;
     /// Increment Device one Cycle
-    fn update(&mut self, bus: Bus, clk: Clock, mem: Memory);
+    fn update(&mut self, clock: &Clock, registers: &mut Registers, memory: &mut Memory, pic: &mut PIC) -> SystemError;
 }

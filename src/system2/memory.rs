@@ -14,23 +14,18 @@
 // limitations under the License.
 //
 
-use super::Word;
 use std::char;
 use std::fmt;
 use std::io::{Read, Write};
 use std::mem;
 use std::slice;
-
-/// Memory Access Errors
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum MemoryError {
-    AddressOverflow,
-}
+use super::Word;
+use super::SystemError;
 
 /// Memory Array
 #[derive(Clone)]
 pub struct Memory {
-    pub(crate) buffer: [Word; 65536],
+    buffer: [Word; 65536],
 }
 
 impl Memory {
@@ -77,9 +72,9 @@ impl Memory {
     ///
     /// Write a slice of memory from buffer
     ///
-    pub fn write(&mut self, address: Word, buffer: &[Word]) -> Result<(), MemoryError> {
+    pub fn write(&mut self, address: Word, buffer: &[Word]) -> Result<(), SystemError> {
         if address as usize + buffer.len() > 65535 {
-            return Err(MemoryError::AddressOverflow);
+            return Err(SystemError::AddressOverflow);
         }
         let start = address as usize;
         let end = start + buffer.len();
@@ -88,9 +83,9 @@ impl Memory {
     ///
     /// Read a slice length of memory at address
     ///
-    pub fn read(&mut self, address: Word, length: Word) -> Result<&[Word], MemoryError> {
+    pub fn read(&mut self, address: Word, length: Word) -> Result<&[Word], SystemError> {
         if address as usize + length as usize > 65535 {
-            return Err(MemoryError::AddressOverflow);
+            return Err(SystemError::AddressOverflow);
         }
         let start = address as usize;
         let end = start + length as usize;

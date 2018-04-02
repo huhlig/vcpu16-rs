@@ -17,28 +17,15 @@
 use std::fmt;
 use super::Word;
 
-/// Errors Returned while Interacting
-/// with the Programmable Interrupt Controller
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum IRQError {
-    /// Queue is Empty during a dequeue
-    QueueEmpty,
-    /// Queue is Full during an enqueue
-    QueueFull,
-    /// Queueing is Enabled
-    Enabled,
-}
-
 /// Interrupt Request Queue
 #[derive(Clone, Copy)]
-pub struct IRQ {
+pub struct PIC {
     interrupts: [Word; 256],
-    enabled: bool,
     write: u8,
     read: u8,
 }
 
-impl fmt::Debug for IRQ {
+impl fmt::Debug for PIC {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "IRQ ( Disabled: {} Queue: ", self.enabled)?;
         if self.read < self.write {
@@ -63,11 +50,10 @@ impl fmt::Debug for IRQ {
     }
 }
 
-impl IRQ {
-    pub fn new() -> IRQ {
-        IRQ {
+impl PIC {
+    pub fn new() -> PIC {
+        PIC {
             interrupts: [0; 256],
-            enabled: false,
             write: 0,
             read: 0,
         }
@@ -77,18 +63,6 @@ impl IRQ {
     }
     pub fn is_full(&self) -> bool {
         self.write.wrapping_add(1) == self.read
-    }
-    pub fn is_enabled(&self) -> bool {
-        self.enabled
-    }
-    pub fn is_disabled(&self) -> bool {
-        !self.enabled
-    }
-    pub fn enable(&mut self) {
-        self.enabled = true
-    }
-    pub fn disable(&mut self) {
-        self.enabled = false
     }
     pub fn enqueue(&mut self, value: Word) -> Result<(), IRQError> {
         if self.write.wrapping_add(1) == self.read {
@@ -111,11 +85,11 @@ impl IRQ {
 
 #[cfg(test)]
 mod tests {
-    use super::{IRQError, IRQ};
+    use super::{IRQError, PIC};
 
     #[test]
     pub fn test_pic() {
-        let mut irq = IRQ::new();
+        let mut irq = PIC::new();
 
         assert!(irq.is_empty());
         assert!(irq.is_disabled());
@@ -131,7 +105,7 @@ mod tests {
 
     #[test]
     pub fn test_fill() {
-        let mut irq = IRQ::new();
+        let mut irq = PIC::new();
 
         assert!(irq.is_empty());
         assert!(irq.is_disabled());

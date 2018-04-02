@@ -15,13 +15,7 @@
 //
 
 use std::fmt;
-
-/// Clock Errors
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum ClockError {
-    /// Attempted to Advance a halted Clock
-    Halted,
-}
+use super::SystemError;
 
 /// System Clock
 #[derive(Clone, Copy)]
@@ -47,9 +41,9 @@ impl Clock {
         self.cycles
     }
     /// Advance Clock if not halted
-    pub fn step(&mut self) -> Result<u64, ClockError> {
+    pub fn step(&mut self) -> Result<u64, SystemError> {
         if self.halted {
-            Err(ClockError::Halted)
+            Err(SystemError::ClockHalted)
         } else {
             self.cycles += 1;
             Ok(self.cycles)
