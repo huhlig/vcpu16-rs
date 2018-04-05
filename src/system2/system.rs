@@ -18,6 +18,9 @@ use super::Bus;
 use super::Clock;
 use super::Hardware;
 use super::Memory;
+use super::Queue;
+use super::PIC;
+use super::Registers;
 use super::State;
 use super::SystemError;
 use std::fmt;
@@ -35,8 +38,8 @@ pub struct System {
     clock: Clock,
     /// System State
     state: State,
-    /// System Interrupt Controller
-    pic: SIC,
+    /// Interrupt Request Queue
+    irq: Queue,
 }
 
 impl System {
@@ -48,14 +51,25 @@ impl System {
             memory: Memory::new(),
             clock: Clock::new(),
             state: State::Idle,
-            pic: PIC::new(),
+            irq: Queue::new(),
         }
     }
     /// Step the System forward one clock cycle
     pub fn step(&mut self) -> Result<(), SystemError> {
         // Advance the clock
         self.clock.step()?;
-        // Update the CPU
+        match self.state {
+            State::Idle => {
+                /// Fetch
+                let base_address = self.registers.pc;
+                let opcode_word = self.memory.get(base_address);
+                self.registers.pc += 1;
+            },
+        };
+        // Fetch
+        let base = self.registers.pc;
+        let word = self.memory.get(base);
+        // Decode
 
 
         // Iterate through Hardware

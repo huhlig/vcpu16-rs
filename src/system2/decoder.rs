@@ -16,29 +16,69 @@
 
 /// CPU State
 pub enum State {
-    Idle,
-    Fetch {
+    /// Step 1
+    FetchBase {
         address: Word,
     },
     Decode {
         address: Word,
+
     },
+
     Execute {
         address: Word,
     },
 }
 
-pub enum Opcode {
-    Unary,
-    Binary,
-    Trinary,
+#[derive(Copy, Clone, Debug)]
+enum Register {
+    PC,
+    SP,
+    PS,
+    A,
+    B,
+    C,
+    X,
+    Y,
+    Z,
+    I,
+    J,
 }
 
-pub enum Instruction {
-
-}
-
-pub enum Location {
-    Literal(Word),
+#[derive(Copy, Clone, Debug)]
+enum Argument {
     Memory(Word),
+    Literal(Word),
+    Register(Register),
 }
+
+enum OpCode {
+    SET,
+    ADD,
+    SUB,
+    MUL,
+    MLI,
+    DIV,
+    DVI,
+    MOD,
+    MDI,
+    AND,
+    BOR,
+    XOR,
+    LLS,
+    LRS,
+    ARS,
+    IFB,
+    IFC,
+    IFE,
+    IFN,
+    IFG,
+    IFA,
+    IFL,
+    IFU,
+    ADX,
+    SBX,
+    STI,
+    STD,
+}
+

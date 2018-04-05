@@ -15,17 +15,18 @@
 //
 
 use std::fmt;
+use super::SystemError;
 use super::Word;
 
 /// Interrupt Request Queue
 #[derive(Clone, Copy)]
-pub struct PIC {
+pub struct Queue {
     interrupts: [Word; 256],
     write: u8,
     read: u8,
 }
 
-impl fmt::Debug for PIC {
+impl fmt::Debug for Queue {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "IRQ ( Disabled: {} Queue: ", self.enabled)?;
         if self.read < self.write {
@@ -50,9 +51,9 @@ impl fmt::Debug for PIC {
     }
 }
 
-impl PIC {
-    pub fn new() -> PIC {
-        PIC {
+impl Queue {
+    pub fn new() -> Queue {
+        Queue {
             interrupts: [0; 256],
             write: 0,
             read: 0,
@@ -64,17 +65,17 @@ impl PIC {
     pub fn is_full(&self) -> bool {
         self.write.wrapping_add(1) == self.read
     }
-    pub fn enqueue(&mut self, value: Word) -> Result<(), IRQError> {
+    pub fn enqueue(&mut self, value: Word) -> Result<(), SystemError> {
         if self.write.wrapping_add(1) == self.read {
-            return Err(IRQError::QueueFull);
+            return Err(SystemError::InterruptOverflow);
         }
         self.interrupts[self.write as usize] = value;
         self.write = self.write.wrapping_add(1);
         Ok(())
     }
-    pub fn dequeue(&mut self) -> Result<Word, IRQError> {
+    pub fn dequeue(&mut self) -> Result<Word, SystemError> {
         if self.read == self.write {
-            return Err(IRQError::QueueEmpty);
+            return Err(SystemError::InterruptUnderflow);
         }
         let value = self.interrupts[self.read as usize];
         self.read = self.read.wrapping_add(1);
@@ -85,27 +86,27 @@ impl PIC {
 
 #[cfg(test)]
 mod tests {
-    use super::{IRQError, PIC};
+    use super::*;
 
     #[test]
     pub fn test_pic() {
-        let mut irq = PIC::new();
+        let mut queue = Queue::new();
 
-        assert!(irq.is_empty());
-        assert!(irq.is_disabled());
+        assert!(queue.is_empty());
+        assert!(queue.is_disabled());
         for input in 0..512u16 {
-            irq.enqueue(input).unwrap();
-            irq.enable();
-            assert!(irq.is_enabled());
-            let output = irq.dequeue().unwrap();
+            queue.enqueue(input).unwrap();
+            queue.enable();
+            assert!(queue.is_enabled());
+            let output = queue.dequeue().unwrap();
             assert_eq!(input, output);
-            irq.disable();
+            queue.disable();
         }
     }
 
     #[test]
     pub fn test_fill() {
-        let mut irq = PIC::new();
+        let mut irq = Queue::new();
 
         assert!(irq.is_empty());
         assert!(irq.is_disabled());

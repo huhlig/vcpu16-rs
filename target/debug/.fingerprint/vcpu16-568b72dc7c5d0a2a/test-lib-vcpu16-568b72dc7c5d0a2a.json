@@ -1,0 +1,1 @@
+{"rustc":17244551033254524728,"features":"[]","target":13931852606727597203,"profile":6320754050084505688,"path":10872709659218687626,"deps":[["rand v0.4.2",13870178229614219532]],"local":[{"MtimeBased":[[1521918693,986828849],".fingerprint/vcpu16-568b72dc7c5d0a2a/dep-test-lib-vcpu16-568b72dc7c5d0a2a"]}],"rustflags":[]}
